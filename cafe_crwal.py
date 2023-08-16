@@ -70,6 +70,12 @@ search_word = [
     "%C4%DF", "%C4%DF%BD%DC", "%C0%CC%B1%DB%C4%DF"
 ]
 
+translate_word = {
+    "%C4%DF" : "콥",
+    "%C4%DF%BD%DC" : "콥쌤",
+    "%C0%CC%B1%DB%C4%DF" : "이글콥"
+}
+
 access_key = os.environ["access_key"]
 secret_access_key = os.environ["secret_access_key"]
 region = os.environ["region"]
@@ -142,7 +148,7 @@ def crwal():
     
     for cafe_name in cafe_list:
         for word in search_word:
-            print(cafe_owner[cafe_name] + " 데이터 수집을 시작합니다. 검색어 : " + word)
+            print(cafe_owner[cafe_name] + " 데이터 수집을 시작합니다. 검색어 : " + translate_word[word])
             # "콥"
             query_str = "?iframe_url=/{0}/ArticleSearchList.nhn%3Fsearch.clubid={1}%26search.searchBy=0%26search.query={2}".format(cafe_name, cafe_id[cafe_name], word)
             comu_url = "https://cafe.naver.com/{0}".format(cafe_name)
