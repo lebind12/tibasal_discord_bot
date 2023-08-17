@@ -125,7 +125,6 @@ def crwal():
     result = []
     options = ChromeOptions()  #자동화된 크롬창 실행
     options.add_argument('headless')
-    options.add_argument('window-size=1920x1080')
     options.add_argument("disable-gpu")
     options.add_argument("no-sandbox")
     options.add_argument("disable-dev-shm-usage")
