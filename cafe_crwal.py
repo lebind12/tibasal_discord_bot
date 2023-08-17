@@ -124,9 +124,9 @@ def crwal():
     print("데이터 수집을 시작합니다.")
     result = []
     options = ChromeOptions()  #자동화된 크롬창 실행
+    options.add_argument("no-sandbox")
     options.add_argument('headless')
     options.add_argument("disable-gpu")
-    options.add_argument("no-sandbox")
     options.add_argument("disable-dev-shm-usage")
     options.add_argument(f'user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36')
     # service = ChromeService(executable_path=ChromeDriverManager().install())
