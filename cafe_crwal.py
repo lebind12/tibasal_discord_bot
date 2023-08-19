@@ -178,7 +178,7 @@ def crwal():
                 if idx < article_count:
                     result.append([ '[' + cafe_owner[cafe_name] + ']'+ ' ' + titles[idx].text, comu_url + '/' + e.text])
                 
-    return result
+    return sorted(result)
 
 def connect_db():
     # 기존 데이터 삭제
