@@ -255,6 +255,7 @@ if __name__ == "__main__":
         except:
             if i < try_count:
                 print("재시도 중.. {}번째 시도 중".format(i+1))
+                time.sleep(3)
                 continue
             else:
                 print("재시도 5회 끝")
