@@ -247,6 +247,18 @@ def send_data(result):
     print("데이터 입력 완료")
 
 if __name__ == "__main__":
-    res = crwal()
-    connect_db()
-    send_data(res)
+    try_count = 5
+    
+    for i in range(6):
+        try:
+            res = crwal()
+        except:
+            if i < try_count:
+                print("재시도 중.. {}번째 시도 중".format(i+1))
+                continue
+            else:
+                print("재시도 5회 끝")
+                raise
+        connect_db()
+        send_data(res)
+        break
