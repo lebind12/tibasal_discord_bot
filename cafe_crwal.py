@@ -16,6 +16,8 @@ from pprint import pprint
 import datetime
 import boto3
 import os
+import sys
+from urllib import parse
 
 
 
@@ -87,6 +89,8 @@ session = boto3.Session(
 )
 client = session.client('dynamodb')
 
+search_flag = False
+
 def calculate_yesterday():
     month_31 = [1, 3, 5, 7, 8, 10, 12]
     month_30 = [4, 6, 9, 11]
@@ -147,7 +151,7 @@ def crwal():
     # 로그인 버튼 클릭
     driver.find_element(By.XPATH, '//*[@id="log.login"]').click()
     time.sleep(1)
-    
+        
     for cafe_name in cafe_list:
         for word in search_word:
             print(cafe_owner[cafe_name] + " 데이터 수집을 시작합니다. 검색어 : " + translate_word[word])
@@ -181,13 +185,17 @@ def crwal():
     return sorted(result)
 
 def connect_db():
+    database_name = "crawl_data"
+    if search_flag:
+        print("검색어 입력을 감지했습니다. 데이터베이스 변경")
+        database_name = "searching_result"
     # 기존 데이터 삭제
-    res = client.delete_table(TableName="crawl_data")
+    res = client.delete_table(TableName=database_name)
     # 테이블 제거될 때 까지 대기
     print("테이블이 제대로 제거될 때 까지 대기합니다.")
     while True:
         res = client.list_tables()
-        if len(res["TableNames"]) < 1:
+        if database_name not in res["TableNames"]:
             break
     # 새로운 데이터를 담을 테이블 생성
     client.create_table(
@@ -201,7 +209,7 @@ def connect_db():
                 'AttributeType' : 'S'
             }
         ],
-        TableName = 'crawl_data',
+        TableName = database_name,
         KeySchema = [
             {
                 'AttributeName' : 'url',
@@ -220,21 +228,27 @@ def connect_db():
 
 def send_data(result):
     # 완전히 생성될 때 까지 대기
+    database_name = "crawl_data"
+    if search_flag:
+        print("검색어 입력을 감지했습니다. 데이터베이스 변경")
+        database_name = "searching_result"
+    
     print("테이블이 생성될 때 까지 대기합니다.")
+    
     while True:
         res = client.describe_table(
-            TableName="crawl_data"
+            TableName=database_name
         )
         if res["Table"]["TableStatus"] == "ACTIVE":
             break
     while True:
         res = client.list_tables()
-        if len(res["TableNames"]) > 0:
+        if database_name in res["TableNames"]:
             break
     for data in result:
         name, url = data
         res = client.put_item(
-            TableName="crawl_data",
+            TableName=database_name,
             Item={
                 'name': {
                     'S' : name
@@ -248,7 +262,20 @@ def send_data(result):
 
 if __name__ == "__main__":
     try_count = 5
-    
+    searching_word = sys.argv[1:]
+    words = []
+    decode_search_word = {}
+    if len(searching_word) > 0:
+        print("검색어 입력을 감지했습니다.")
+        search_flag = True
+        for word in searching_word:
+            t = parse.quote(word.encode(encoding='euc-kr'))
+            words.append(t)
+            decode_search_word[t] = word
+        search_word = words
+        translate_word = decode_search_word
+        print(words)
+        print(translate_word)
     for i in range(6):
         try:
             res = crwal()
