@@ -234,6 +234,12 @@ def send_data(result):
         database_name = "searching_result"
     
     print("테이블이 생성될 때 까지 대기합니다.")
+
+
+    while True:
+        res = client.list_tables()
+        if database_name in res["TableNames"]:
+            break
     
     while True:
         res = client.describe_table(
@@ -241,10 +247,7 @@ def send_data(result):
         )
         if res["Table"]["TableStatus"] == "ACTIVE":
             break
-    while True:
-        res = client.list_tables()
-        if database_name in res["TableNames"]:
-            break
+            
     for data in result:
         name, url = data
         res = client.put_item(
