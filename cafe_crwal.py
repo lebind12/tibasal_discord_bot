@@ -224,8 +224,8 @@ def connect_db():
             }
         ],
         ProvisionedThroughput={
-        'ReadCapacityUnits': 10,
-        'WriteCapacityUnits': 10
+        'ReadCapacityUnits': 1000,
+        'WriteCapacityUnits': 1000
         },
     )
 
